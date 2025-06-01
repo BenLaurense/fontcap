@@ -7,9 +7,6 @@ from fontcap_model.dataset import get_dataloaders
 from fontcap_model.models import CNN_Autoencoder
 from fontcap_model.utils import plot_losses, display_reconstructions
 
-import torch
-import torch.nn as nn
-
 logger = logging.getLogger(__name__)
     
 def train_autoencoder(
@@ -21,11 +18,13 @@ def train_autoencoder(
     checkpoint_interval: int = 5, # Saves model params every x epochs
     plot_interval: int = 1, # Plots every x epochs
 ):
+    """Training loop for the CNN_Autoencoder model"""
     checkpoint_dir = Path(checkpoint_dir)
     checkpoint_dir.mkdir(exist_ok=True, parents=True)
-    
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Running on device: {device}")
+    
     model = CNN_Autoencoder().to(device)
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     loss_fn = nn.MSELoss()
