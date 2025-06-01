@@ -1,15 +1,18 @@
 # Web
 requests
+pyyaml
 
 # DS stuff
 numpy
 pandas
 pytorch
 
-# Plotting
+# Plotting/viz
 matplotlib
 seaborn
+streamlit
 
 # Misc
 click
+argparse
 tqdm
