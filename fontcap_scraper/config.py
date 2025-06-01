@@ -14,7 +14,7 @@ class FontcapConfig:
     index_file: Path
 
     def __post_init__(self):
-        self.index_file = self.output_dir / "index.json"
+        self.index_file = self.output_dir / self.index_file
 
     @classmethod
     def from_yaml(cls, path: Path):
@@ -22,5 +22,4 @@ class FontcapConfig:
             data = yaml.safe_load(f)
         data.setdefault('charset', [chr(i) for i in range(65, 91)] + [chr(i) for i in range(97, 123)])
         data['output_dir'] = Path(data['output_dir'])
-        data['index_file'] = Path(data['index_file'])
         return cls(**data)

@@ -5,7 +5,7 @@ font_sources:
     api_key: AIzaSyCSvL4yB61uFOu_V6pjItmkCs0d6zSfuKg
 
 output_dir: data/fonts
-img_size: 32
-font_size: 64
+img_size: 16
+font_size: 18 # 18pt text in a 16x16 image works fairly well
 min_chars_required: 48
-index_file: index.json
+index_file: index.json # In output_dir
