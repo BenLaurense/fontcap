@@ -1,0 +1,6 @@
+img_size: 32
+output_dir: data/fonts
+font_sources:
+  - name: google_fonts
+    type: api
+    url: https://example.com
