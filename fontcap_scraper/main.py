@@ -29,7 +29,7 @@ def run_scraper(cfg: FontcapConfig):
         logger.info(f"Found {len(font_metadata_list)} fonts")
 
         # Download each font file if it doesn't exist
-        for metadata in tqdm(font_metadata_list[:2]):
+        for metadata in tqdm(font_metadata_list):
             font_bytes = download_font_file(metadata.url)
             if not font_bytes:
                 logger.info(f"Unsuccessful scrape of {metadata.name}: download failed")
@@ -49,7 +49,7 @@ def run_scraper(cfg: FontcapConfig):
             known_hashes.add(hsh)
             logger.info(f"Successfully scraped font {metadata.name}")
         
-        logger.info(f"Scraping source {source} complete!")
+        logger.info(f"Scraping source {source['name']} complete!")
         
     # Update and store hashes
     update_known_hashes(cfg.index_file, known_hashes)

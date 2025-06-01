@@ -29,10 +29,10 @@ class GoogleFontsSource:
 
         fonts_data = response.json().get("items", [])
         font_list = []
-        for font in fonts_data[:3]:
+        for font in fonts_data:
             family = font.get("family")
             files = font.get("files", {})
-            # Prefer regular or 400 weight as a baseline
+            # Prefer regular or 400 weight as a baseline. Could collect both?
             url = files.get("regular") or files.get("400") or next(iter(files.values()), None)
 
             if family and url:
