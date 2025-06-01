@@ -46,23 +46,15 @@ def check_dataset(dataset_dir: Path):
             avg_sparseness = np.mean(sparseness_values)
             metrics.append((font_dir.name, avg_density, avg_sparseness))
 
-            click.echo(f"[SUCCESS] {font_dir.name}")
+            density_color = color_metric(avg_density, 0.05, 0.25) # type: ignore
+            sparse_color = color_metric(avg_sparseness, 1.5, 5.0) # type: ignore
+            density_str = click.style(f"{avg_density:.3f}", fg=density_color)
+            sparse_str = click.style(f"{avg_sparseness:.2f}", fg=sparse_color)
+            click.echo(f"[SUCCESS] {font_dir.name:<30} | density={density_str} | sparseness={sparse_str}")
 
     click.echo("\nSummary:")
     click.echo(f"Fonts checked: {total_fonts}")
     click.echo(f"Fonts processed successfully: {len(metrics)}\n")
-
-    header = f"{'Font Name':<30} {'Density':>10} {'Sparseness':>15}"
-    click.echo(click.style(header, bold=True, underline=True))
-
-    for name, density, sparse in metrics:
-        density_color = color_metric(density, 0.05, 0.25)
-        sparse_color = color_metric(sparse, 1.5, 5.0)
-
-        density_str = click.style(f"{density:.3f}", fg=density_color)
-        sparse_str = click.style(f"{sparse:.2f}", fg=sparse_color)
-
-        click.echo(f"{name:<30} {density_str:>10} {sparse_str:>15}")
 
 def color_metric(value: float, low: float, high: float) -> str:
     """Colorize a value from red (low) to green (high) using ANSI colors."""
@@ -94,7 +86,7 @@ def compute_sparseness(image: Image.Image) -> float:
         neighborhood = padded[y:y+3, x:x+3]
         neighbors = np.sum(neighborhood) - 1
         sparseness += neighbors
-    return sparseness / len(black_pixels)
+    return sparseness / len(black_pixels) # type: ignore
 
 if __name__ == "__main__":
     check_dataset()
