@@ -1,6 +1,11 @@
-img_size: 32
-output_dir: data/fonts
 font_sources:
   - name: google_fonts
     type: api
-    url: https://example.com
+    url: https://www.googleapis.com/webfonts/v1/webfonts
+    api_key: AIzaSyCSvL4yB61uFOu_V6pjItmkCs0d6zSfuKg
+
+output_dir: data/fonts
+img_size: 32
+font_size: 64
+min_chars_required: 48
+index_file: index.json
