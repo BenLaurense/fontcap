@@ -83,6 +83,6 @@ for font in fonts:
     uppercase = [Image.open(font["path"] / f"{ord(c)}.png") for c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" if (font["path"] / f"{ord(c)}.png").exists()]
     lowercase = [Image.open(font["path"] / f"{ord(c)}.png") for c in "abcdefghijklmnopqrstuvwxyz" if (font["path"] / f"{ord(c)}.png").exists()]
 
-    render_glyph_row(uppercase, "Uppercase")
-    render_glyph_row(lowercase, "Lowercase")
+    render_glyph_row(uppercase, "Uppercase") # type: ignore
+    render_glyph_row(lowercase, "Lowercase") # type: ignore
     st.markdown("---")

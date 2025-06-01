@@ -7,8 +7,8 @@ import numpy as np
 
 CHARSET = "abcdefghijklmnopqrstuvwxyz"
 
-class FontCapitalizationDataset(Dataset):
-    """Datasetwrapper for trained fonts"""
+class FontcapDataset(Dataset):
+    """Dataset wrapper for scraped fonts"""
     def __init__(self, data_root: Path, transform=None):
         self.data_root = Path(data_root)
         self.transform = transform
@@ -57,7 +57,7 @@ def get_dataloaders(
 ) -> Tuple[DataLoader, DataLoader]:
     if type(data_root) is str:
         data_root = Path(data_root)
-    dataset = FontCapitalizationDataset(data_root) # type: ignore
+    dataset = FontcapDataset(data_root) # type: ignore
     total_size = len(dataset)
     train_size = int(train_ratio * total_size)
     val_size = total_size - train_size

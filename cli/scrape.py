@@ -3,7 +3,6 @@ import click
 from fontcap_scraper.main import run_scraper
 from fontcap_scraper.config import FontcapConfig
 
-# Configure root logger if not already configured
 logging.basicConfig(
     level=logging.INFO,  # or DEBUG, WARNING, etc.
     format='[%(asctime)s] %(levelname)s: %(message)s',
