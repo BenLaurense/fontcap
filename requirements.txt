@@ -16,3 +16,6 @@ streamlit
 click
 argparse
 tqdm
+
+# Jupyter
+ipykernel
