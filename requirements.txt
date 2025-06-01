@@ -1,0 +1,15 @@
+# Web
+requests
+
+# DS stuff
+numpy
+pandas
+pytorch
+
+# Plotting
+matplotlib
+seaborn
+
+# Misc
+click
+tqdm
