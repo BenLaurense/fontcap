@@ -1,11 +1,9 @@
 import logging
 from tqdm import tqdm
 import requests
-from pathlib import Path
-from config import FontcapConfig
-from sources.google_fonts import GoogleFontsSource
-from utils.deduplication import load_known_hashes, font_hash, update_known_hashes
-from utils.rendering import render_glyphs, save_glyphs
+from fontcap_scraper.config import FontcapConfig
+from fontcap_scraper.utils import render_glyphs, save_glyphs, font_hash, load_known_hashes, update_known_hashes
+from fontcap_scraper.sources import GoogleFontsSource
 
 logger = logging.getLogger(__name__)
 
