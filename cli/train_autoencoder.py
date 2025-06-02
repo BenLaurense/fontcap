@@ -22,7 +22,8 @@ logging.basicConfig(
               default=20, help='Save example model outputs every x epochs')
 @click.option('--start_state', '-st', type=click.Path(exists=True), required=False,
               help='Path to starting parameters')
-def run(data_root, epochs, batch_size, learning_rate, checkpoint_dir, checkpoint_interval, plot_interval, start_state, verbose):
+@click.option('--resume_loss', '-rl', is_flag=True, help='Resume loss curve')
+def run(data_root, epochs, batch_size, learning_rate, checkpoint_dir, checkpoint_interval, plot_interval, start_state, resume_loss, verbose):
     if verbose:
         logging.getLogger().setLevel(logging.DEBUG)
     train_autoencoder(
@@ -32,7 +33,9 @@ def run(data_root, epochs, batch_size, learning_rate, checkpoint_dir, checkpoint
         learning_rate=learning_rate,
         checkpoint_dir=checkpoint_dir,
         checkpoint_interval=checkpoint_interval,
-        plot_interval=plot_interval, state_dict_path=start_state)
+        plot_interval=plot_interval,
+        state_dict_path=start_state,
+        resume_loss=resume_loss)
     return
 
 if __name__ == '__main__':

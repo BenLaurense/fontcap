@@ -1,4 +1,5 @@
 import logging
+import json
 import torch
 from torch import nn, optim
 from pathlib import Path
@@ -8,16 +9,18 @@ from fontcap_model.models import CNN_Autoencoder
 from fontcap_model.utils import plot_losses, display_reconstructions
 
 logger = logging.getLogger(__name__)
-    
+
+
 def train_autoencoder(
-    data_root: str | Path,
-    num_epochs: int = 5,
-    batch_size: int = 32,
-    learning_rate: float = 1e-3,
-    checkpoint_dir: str | Path = "./checkpoints",
-    checkpoint_interval: int = 5, # Saves model params every x epochs
-    plot_interval: int = 1, # Plots every x epochs
-    state_dict_path: Path | None = None
+        data_root: str | Path,
+        num_epochs: int = 5,
+        batch_size: int = 32,
+        learning_rate: float = 1e-3,
+        checkpoint_dir: str | Path = "./checkpoints",
+        checkpoint_interval: int = 5,  # Saves model params every x epochs
+        plot_interval: int = 1,  # Plots every x epochs
+        state_dict_path: Path | None = None,
+        resume_loss: bool = False  # Resumes the loss curve
 ):
     """Training loop for the CNN_Autoencoder model"""
     checkpoint_dir = Path(checkpoint_dir)
@@ -25,7 +28,7 @@ def train_autoencoder(
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Running on device: {device}")
-    
+
     model = CNN_Autoencoder().to(device)
     if state_dict_path:
         model.load_state_dict(torch.load(checkpoint_dir / f"autoencoder_epoch200.pt"))
@@ -34,7 +37,19 @@ def train_autoencoder(
 
     train_loader, test_loader = get_dataloaders(data_root, batch_size=batch_size, shuffle=True)
 
+    # Load losses if they exist
+    train_loss_path = checkpoint_dir / "train_losses.json"
+    test_loss_path = checkpoint_dir / "test_losses.json"
     train_losses, test_losses = [], []
+    if resume_loss and train_loss_path.exists() and test_loss_path.exists():
+        with open(train_loss_path, "r") as f:
+            train_losses = json.load(f)
+        with open(test_loss_path, "r") as f:
+            test_losses = json.load(f)
+        logger.info(f"Resumed loss history (train: {len(train_losses)}, test: {len(test_losses)})")
+    else:
+        logger.info(f"Did not resume loss history")
+
     for epoch in range(1, num_epochs + 1):
         model.train()
         epoch_train_loss = 0.0
@@ -59,7 +74,7 @@ def train_autoencoder(
         with torch.no_grad():
             for lower, upper in test_loader:
                 lower, upper = lower.to(device), upper.to(device)
-                
+
                 loss = loss_fn(model(lower), upper)
                 epoch_test_loss += loss.item() * lower.size(0)
 
@@ -71,6 +86,10 @@ def train_autoencoder(
         if not epoch % checkpoint_interval:
             torch.save(model.state_dict(), checkpoint_dir / f"autoencoder_epoch{epoch}.pt")
         if not epoch % plot_interval:
+            with open(train_loss_path, "w") as f:
+                json.dump(train_losses, f)
+            with open(test_loss_path, "w") as f:
+                json.dump(test_losses, f)
             plot_losses(train_losses, test_losses, checkpoint_dir / "loss_curve.png")
             display_reconstructions(model, test_loader, device, checkpoint_dir / f"recon_epoch{epoch}.png")
     return
