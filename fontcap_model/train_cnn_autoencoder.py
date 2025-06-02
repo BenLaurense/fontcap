@@ -17,6 +17,7 @@ def train_autoencoder(
     checkpoint_dir: str | Path = "./checkpoints",
     checkpoint_interval: int = 5, # Saves model params every x epochs
     plot_interval: int = 1, # Plots every x epochs
+    state_dict_path: Path | None = None
 ):
     """Training loop for the CNN_Autoencoder model"""
     checkpoint_dir = Path(checkpoint_dir)
@@ -26,6 +27,8 @@ def train_autoencoder(
     logger.info(f"Running on device: {device}")
     
     model = CNN_Autoencoder().to(device)
+    if state_dict_path:
+        model.load_state_dict(torch.load(checkpoint_dir / f"autoencoder_epoch200.pt"))
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     loss_fn = nn.MSELoss()
 
@@ -41,12 +44,13 @@ def train_autoencoder(
             lower, upper = lower.to(device), upper.to(device)
 
             optimizer.zero_grad()
-            loss = loss_fn(model(lower), upper)
+            outputs = model(lower)
+            loss = loss_fn(outputs, upper)
             loss.backward()
             optimizer.step()
             epoch_train_loss += loss.item() * lower.size(0)
 
-        train_loss = epoch_train_loss / len(train_loader.dataset) # type: ignore
+        train_loss = epoch_train_loss / len(train_loader)
         train_losses.append(train_loss)
 
         # Testing loss
@@ -59,7 +63,7 @@ def train_autoencoder(
                 loss = loss_fn(model(lower), upper)
                 epoch_test_loss += loss.item() * lower.size(0)
 
-        test_loss = epoch_test_loss / len(test_loader.dataset) # type: ignore
+        test_loss = epoch_test_loss / len(test_loader)
         test_losses.append(test_loss)
 
         # Log/plot stuff
@@ -69,11 +73,4 @@ def train_autoencoder(
         if not epoch % plot_interval:
             plot_losses(train_losses, test_losses, checkpoint_dir / "loss_curve.png")
             display_reconstructions(model, test_loader, device, checkpoint_dir / f"recon_epoch{epoch}.png")
-
-if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.INFO,  # or DEBUG, WARNING, etc.
-        format='[%(asctime)s] %(levelname)s: %(message)s',
-    )
-
-    train_autoencoder(data_root="data/fonts", num_epochs=10, batch_size=16)
+    return

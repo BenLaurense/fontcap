@@ -8,7 +8,8 @@ CLI tool to interrogate scraped fonts
 """
 
 @click.command()
-@click.argument("dataset_dir", type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path))
+@click.argument("--dataset_dir", type=click.Path(exists=True, file_okay=False,
+                                                 dir_okay=True, path_type=Path), required=True)
 def check_dataset(dataset_dir: Path):
     """Check dataset structure and compute per-font metrics (density, sparseness)."""
     click.echo(f"Checking dataset in: {dataset_dir}")
