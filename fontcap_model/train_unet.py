@@ -5,23 +5,23 @@ from torch import nn, optim
 from pathlib import Path
 from tqdm import tqdm
 from fontcap_model.dataset import get_dataloaders
-from fontcap_model.models import CNNAutoencoder
+from fontcap_model.models import UNet
 from fontcap_model.utils import plot_losses, display_reconstructions
 
 logger = logging.getLogger(__name__)
 
 
-def train_cnn_autoencoder(
+def train_unet(
         data_root: str | Path,
         num_epochs: int,
         batch_size: int,
         learning_rate: float,
         checkpoint_dir: str | Path,
-        checkpoint_interval: int = 5,  # Saves model params every x epochs
-        plot_interval: int = 1,  # Plots every x epochs
+        checkpoint_interval: int = 5,
+        plot_interval: int = 1,
         state_dict_name: str | None = None,
-        resume_loss: bool = False  # Resumes the loss curve
-    ):
+        resume_loss: bool = False
+):
     """
     Training loop for the CNN_Autoencoder model.
     A new checkpoints directory should be created each run or they will
@@ -33,9 +33,9 @@ def train_cnn_autoencoder(
     checkpoint_dir.mkdir(exist_ok=True, parents=True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    logger.info(f"Running on device: {device}")
+    logger.info(f"Using device: {device}")
 
-    model = CNNAutoencoder().to(device)
+    model = UNet().to(device)
     if state_dict_name:
         model.load_state_dict(torch.load(checkpoint_dir / state_dict_name))
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
@@ -65,8 +65,8 @@ def train_cnn_autoencoder(
             lower, upper = lower.to(device), upper.to(device)
 
             optimizer.zero_grad()
-            outputs = model(lower)
-            loss = loss_fn(outputs, upper)
+            output = model(lower)
+            loss = loss_fn(output, upper)
             loss.backward()
             optimizer.step()
             epoch_train_loss += loss.item() * lower.size(0)
@@ -80,7 +80,6 @@ def train_cnn_autoencoder(
         with torch.no_grad():
             for lower, upper in test_loader:
                 lower, upper = lower.to(device), upper.to(device)
-
                 loss = loss_fn(model(lower), upper)
                 epoch_test_loss += loss.item() * lower.size(0)
 
@@ -90,7 +89,7 @@ def train_cnn_autoencoder(
         # Log/plot stuff
         logger.info(f"[Epoch {epoch}] Train Loss: {train_loss:.4f} | Test Loss: {test_loss:.4f} | LR: {learning_rate}")
         if not epoch % checkpoint_interval:
-            torch.save(model.state_dict(), checkpoint_dir / f"epoch{epoch}.pt")
+            torch.save(model.state_dict(), checkpoint_dir / f"_epoch{epoch}.pt")
         if not epoch % plot_interval:
             with open(train_loss_path, "w") as f:
                 json.dump(train_losses, f)
@@ -98,4 +97,4 @@ def train_cnn_autoencoder(
                 json.dump(test_losses, f)
             plot_losses(train_losses, test_losses, checkpoint_dir / "loss_curve.png")
             display_reconstructions(model, test_loader, device, checkpoint_dir / f"recon_epoch{epoch}.png")
-    return
+        return
