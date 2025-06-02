@@ -89,7 +89,7 @@ def train_unet(
         # Log/plot stuff
         logger.info(f"[Epoch {epoch}] Train Loss: {train_loss:.4f} | Test Loss: {test_loss:.4f} | LR: {learning_rate}")
         if not epoch % checkpoint_interval:
-            torch.save(model.state_dict(), checkpoint_dir / f"_epoch{epoch}.pt")
+            torch.save(model.state_dict(), checkpoint_dir / f"epoch{epoch}.pt")
         if not epoch % plot_interval:
             with open(train_loss_path, "w") as f:
                 json.dump(train_losses, f)

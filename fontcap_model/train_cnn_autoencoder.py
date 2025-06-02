@@ -21,7 +21,7 @@ def train_cnn_autoencoder(
         plot_interval: int = 1,  # Plots every x epochs
         state_dict_name: str | None = None,
         resume_loss: bool = False  # Resumes the loss curve
-    ):
+):
     """
     Training loop for the CNN_Autoencoder model.
     A new checkpoints directory should be created each run or they will
