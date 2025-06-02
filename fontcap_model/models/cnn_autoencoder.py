@@ -2,7 +2,7 @@ import torch.nn as nn
 from torch.nn import Module
 
 # TODO: add parameterisation to this mode
-class CNN_Autoencoder(Module):
+class CNNAutoencoder(Module):
     """
     Simple convolutional autoencoder model
     """

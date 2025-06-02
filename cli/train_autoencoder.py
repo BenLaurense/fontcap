@@ -1,7 +1,7 @@
 import logging
 import click
 from pathlib import Path
-from fontcap_model import train_autoencoder
+from fontcap_model import train_cnn_autoencoder
 
 logging.basicConfig(
     level=logging.INFO,  # or DEBUG, WARNING, etc.
@@ -21,12 +21,12 @@ logging.basicConfig(
 @click.option('--plot_interval', '-pi', type=int, required=False,
               default=20, help='Save example model outputs every x epochs')
 @click.option('--start_state', '-st', type=click.Path(exists=True), required=False,
-              help='Path to starting parameters')
+              help='Starting parameters file (stored in checkpoints dir')
 @click.option('--resume_loss', '-rl', is_flag=True, help='Resume loss curve')
 def run(data_root, epochs, batch_size, learning_rate, checkpoint_dir, checkpoint_interval, plot_interval, start_state, resume_loss, verbose):
     if verbose:
         logging.getLogger().setLevel(logging.DEBUG)
-    train_autoencoder(
+    train_cnn_autoencoder(
         data_root=data_root,
         num_epochs=epochs,
         batch_size=batch_size,
@@ -34,7 +34,7 @@ def run(data_root, epochs, batch_size, learning_rate, checkpoint_dir, checkpoint
         checkpoint_dir=checkpoint_dir,
         checkpoint_interval=checkpoint_interval,
         plot_interval=plot_interval,
-        state_dict_path=start_state,
+        state_dict_name=start_state,
         resume_loss=resume_loss)
     return
 

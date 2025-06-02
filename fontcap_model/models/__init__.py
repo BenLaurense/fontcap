@@ -1,3 +1,4 @@
-from .cnn_autoencoder import CNN_Autoencoder
+from .cnn_autoencoder import CNNAutoencoder
+from .u_net import UNet
 
-__all__ = ["CNN_Autoencoder"]
+__all__ = ["CNNAutoencoder", "UNet"]
