@@ -1,5 +1,7 @@
 import logging
 import json
+import random
+
 import torch
 from torch import nn, optim
 from pathlib import Path
@@ -41,7 +43,9 @@ def train_cnn_autoencoder(
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     loss_fn = nn.MSELoss()
 
-    train_loader, test_loader = get_dataloaders(data_root, batch_size=batch_size, shuffle=True)
+    # TODO: support for random seed
+    train_loader, test_loader = get_dataloaders(data_root, batch_size=batch_size,
+                                                shuffle=True, seed=random.randint(1, 100))
 
     # Load losses if they exist
     train_loss_path = checkpoint_dir / "train_losses.json"
@@ -61,6 +65,7 @@ def train_cnn_autoencoder(
         epoch_train_loss = 0.0
 
         # Training loop
+        # TODO: adapt this for partial runs
         for lower, upper in tqdm(train_loader, desc=f"[Train] Epoch {epoch}/{num_epochs}"):
             lower, upper = lower.to(device), upper.to(device)
 

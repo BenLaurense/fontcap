@@ -21,7 +21,9 @@ def plot_losses(
     plt.tight_layout()
     if path:
         plt.savefig(path)
-    plt.close()
+        plt.close()
+    else:
+        plt.show()
     return
 
 def display_reconstructions(
@@ -57,5 +59,7 @@ def display_reconstructions(
     plt.tight_layout()
     if path:
         plt.savefig(path)
-    plt.close()
+        plt.close()
+    else:
+        plt.show()
     return

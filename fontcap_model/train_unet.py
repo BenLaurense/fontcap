@@ -97,4 +97,4 @@ def train_unet(
                 json.dump(test_losses, f)
             plot_losses(train_losses, test_losses, checkpoint_dir / "loss_curve.png")
             display_reconstructions(model, test_loader, device, checkpoint_dir / f"recon_epoch{epoch}.png")
-        return
+    return

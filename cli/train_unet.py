@@ -26,7 +26,7 @@ logging.basicConfig(
               default=20, help='Save the model parameters every x epochs')
 @click.option('--plot_interval', '-pi', type=int, required=False,
               default=20, help='Save example model outputs every x epochs')
-@click.option('--start_state', '-st', type=click.Path(exists=True), required=False,
+@click.option('--start_state', '-st', type=click.Path(), required=False,
               help='Starting parameters file (stored in checkpoints dir')
 @click.option('--resume_loss', '-rl', is_flag=True, help='Resume loss curve')
 def run(data_root, epochs, batch_size, learning_rate, checkpoint_dir, checkpoint_interval, plot_interval, start_state,

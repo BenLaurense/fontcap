@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Tuple
 import torch
 from torch.utils.data import Dataset, DataLoader, random_split
 from PIL import Image
@@ -54,7 +53,7 @@ def get_dataloaders(
     batch_size: int = 32,
     shuffle: bool = True,
     seed: int = 42
-) -> Tuple[DataLoader, DataLoader]:
+) -> tuple[DataLoader, DataLoader]:
     if type(data_root) is str:
         data_root = Path(data_root)
     dataset = FontcapDataset(data_root) # type: ignore
