@@ -72,6 +72,9 @@ class EnrichedFontcapDataset(Dataset):
                     pairs.append((lower_path, upper_path, font_name, c))
         return pairs
 
+    def __len__(self):
+        return len(self.pairs)
+
     def __getitem__(self, idx):
         def pil_to_base64(pil_img):
             buf = io.BytesIO()
