@@ -10,7 +10,7 @@ import io
 from base64 import b64encode
 
 """
-Simple streamlit UI to view the fonts
+Simple streamlit UI to view the fonts. Usage: streamlit run fontcap_scraper/ui.py
 """
 
 # TODO make these configurable
@@ -48,7 +48,7 @@ st.markdown("""
         padding-top: 2rem;
     }
     </style>
-""", unsafe_allow_html=True)
+""", unsafe_allow_html=True) # This was needed and I am still confused
 
 def render_glyph_row(images: list[Image.Image], label: str, top_margin: int = 50):
     st.markdown(f"**{label}**", unsafe_allow_html=True)
