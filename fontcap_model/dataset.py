@@ -3,11 +3,15 @@ import torch
 from torch.utils.data import Dataset, DataLoader, random_split
 from PIL import Image
 import numpy as np
+import io
+import base64
 
 CHARSET = "abcdefghijklmnopqrstuvwxyz"
 
+
 class FontcapDataset(Dataset):
     """Dataset wrapper for scraped fonts"""
+
     def __init__(self, data_root: Path, transform=None):
         self.data_root = Path(data_root)
         self.transform = transform
@@ -47,16 +51,37 @@ class FontcapDataset(Dataset):
 
         return lower_tensor, upper_tensor
 
+
+class EnrichedFontcapDataset(FontcapDataset):
+    """Dataset wrapper for scraped fonts, includes character and font labels"""
+
+    def __getitem__(self, idx):
+        def pil_to_base64(pil_img):
+            buf = io.BytesIO()
+            pil_img.save(buf, format='PNG')
+            byte_im = buf.getvalue()
+            return base64.b64encode(byte_im).decode('utf-8')
+
+        lower_path, upper_path, font_name, char = self.pairs[idx]
+        lower_img = Image.open(lower_path).convert('L')
+        upper_img = Image.open(upper_path).convert('L')
+        lower_arr = np.array(lower_img, dtype=np.float32) / 255.0
+        upper_arr = np.array(upper_img, dtype=np.float32) / 255.0
+        lower_tensor = torch.from_numpy(lower_arr).unsqueeze(0)
+        upper_tensor = torch.from_numpy(upper_arr).unsqueeze(0)
+        return lower_tensor, upper_tensor, font_name, char, pil_to_base64(lower_img.copy())
+
+
 def get_dataloaders(
-    data_root: str | Path,
-    train_ratio: float = 0.8,
-    batch_size: int = 32,
-    shuffle: bool = True,
-    seed: int = 42
+        data_root: str | Path,
+        train_ratio: float = 0.8,
+        batch_size: int = 32,
+        shuffle: bool = True,
+        seed: int = 42
 ) -> tuple[DataLoader, DataLoader]:
     if type(data_root) is str:
         data_root = Path(data_root)
-    dataset = FontcapDataset(data_root) # type: ignore
+    dataset = FontcapDataset(data_root)  # type: ignore
     total_size = len(dataset)
     train_size = int(train_ratio * total_size)
     val_size = total_size - train_size
