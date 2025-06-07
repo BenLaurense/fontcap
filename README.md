@@ -1,8 +1,28 @@
 # fontcap
 
-Python project to train convolutional NNs to capitalise fonts. 
+Python project to train convolutional NNs to capitalise fonts.
 
-### Project structure
+#### Project plan:
+
+* Scrape fonts from Google fonts and similar APIs;
+* Encode as low-res greyscale .png images;
+* Train a CNN autoencoder/U-Net to capitalise the fonts.
+
+The performance after these steps was not good enough! I used hyperparameters plucked out of thin air, but looking at example outputs from the trained model (`experiments/model_comparison.ipynb`), three things are apparent:
+* The raw data is quite dirty
+* The models reach minimum test loss quickly (then begin to slowly overfit)
+* Even when the models perform well, the outputs are blurry
+
+Point 2 is mostly a consequence of point 1, and the fact that data is limited. Micro-optimisations in training procedure would be insufficient to increase performance. 
+In order to make more progress, take the following steps:
+
+* Add an antialiasing step to the end of the CNN/U-Net models;
+* Retrain the CNN on the dirty data;
+* Extract the latent representation from the bottleneck CNN layer;
+* Perform clustering on the latents, and use this to exclude dirty fonts;
+* Retrain the U-Net on this cleaned data.
+
+### Repo structure
 
 #### Scraping:
 
