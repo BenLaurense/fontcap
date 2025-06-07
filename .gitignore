@@ -1,6 +1,8 @@
 venv
 __pycache__
 data/*
-checkpoints
 .ipynb_checkpoints
 .idea
+# Local config files and checkpoints
+checkpoints
+googleapi_config.yaml
