@@ -24,7 +24,7 @@ def run_tsne(
 
 def plot_tsne_2d(latents, colours=None):
     fig = plt.figure(figsize=(10, 8))
-    ax = fig.axes[0]
+    ax = fig.add_subplot(111, projection='3d')
     ax.scatter(latents[:, 0], latents[:, 1], c=colours, cmap='tab20', s=5, alpha=0.7)
     ax.title('t-SNE Projection of Latents')
     ax.xlabel('Feature 1')
@@ -69,7 +69,7 @@ def plot_tsne_2d_restricted(
     legend_elts = [Patch(facecolor=colours[i], label=labels[i]) for i in distinct_idx]
 
     fig = plt.figure(figsize=(10, 8))
-    ax = fig.axes[0]
+    ax = fig.add_subplot(111, projection='3d')
     ax.scatter(allowed_latents[:, 0], allowed_latents[:, 1], c=colours, s=5, alpha=0.7)
     ax.title('t-SNE Projection of Latents')
     ax.xlabel('Feature 1')
@@ -77,4 +77,4 @@ def plot_tsne_2d_restricted(
     ax.legend(handles=legend_elts, title="Legend")
     ax.grid(True)
     ax.tight_layout()
-    return
+    return fig
