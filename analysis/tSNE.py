@@ -22,10 +22,10 @@ def run_tsne(
     return tsne.fit_transform(latents)
 
 
-def plot_tsne_2d(latents, colours=None):
+def plot_tsne_2d(latents, colours=None, sizes=5):
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111,)
-    ax.scatter(latents[:, 0], latents[:, 1], c=colours, cmap='tab20', s=5, alpha=0.7)
+    ax.scatter(latents[:, 0], latents[:, 1], c=colours, cmap='tab20', s=sizes, alpha=0.7)
     ax.set_title('t-SNE Projection of Latents')
     ax.set_xlabel('Feature 1')
     ax.set_ylabel('Feature 2')
@@ -33,12 +33,12 @@ def plot_tsne_2d(latents, colours=None):
     return fig
 
 
-def plot_tsne_3d(latents, colours=None):
+def plot_tsne_3d(latents, colours=None, sizes=5):
     fig = plt.figure(figsize=(8, 6))
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(
         latents[:, 0], latents[:, 1], latents[:, 2],
-        c=colours, cmap='tab20', s=8, alpha=0.7
+        c=colours, cmap='tab20', s=sizes, alpha=0.7
     )
     ax.set_title('t-SNE Projection of Latents')
     ax.set_xlabel('Feature 1')
@@ -50,7 +50,8 @@ def plot_tsne_3d(latents, colours=None):
 def plot_tsne_2d_restricted(
         latents,
         latent_labels,  # The labels attached to each latent
-        labels_to_plot  # Which labels to include in the plot
+        labels_to_plot,  # Which labels to include in the plot
+        sizes=5
 ):
     """Plots latents with labels"""
     # Indexes of latents/labels to plot
@@ -66,7 +67,7 @@ def plot_tsne_2d_restricted(
 
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111)
-    ax.scatter(allowed_latents[:, 0], allowed_latents[:, 1], c=colours, s=5, alpha=0.7)
+    ax.scatter(allowed_latents[:, 0], allowed_latents[:, 1], c=colours, s=sizes, alpha=0.7)
     ax.set_title('t-SNE Projection of Latents')
     ax.set_xlabel('Feature 1')
     ax.set_ylabel('Feature 2')

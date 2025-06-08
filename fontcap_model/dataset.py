@@ -6,21 +6,21 @@ import numpy as np
 import io
 import base64
 
-
 CHARSET = "abcdefghijklmnopqrstuvwxyz"
 
 
 class FontcapDataset(Dataset):
     """Dataset wrapper for scraped fonts"""
-    def __init__(self, data_root: Path, transform=None):
+
+    def __init__(self, data_root: Path, excluded_fonts: list[str]):
         self.data_root = Path(data_root)
-        self.transform = transform
+        self.excluded_fonts = excluded_fonts
         self.pairs = self._collect_pairs()
 
     def _collect_pairs(self):
         pairs = []
         for font_dir in self.data_root.iterdir():
-            if not font_dir.is_dir():
+            if not font_dir.is_dir() or font_dir.name in self.excluded_fonts:
                 continue
 
             for c in CHARSET:
@@ -45,23 +45,21 @@ class FontcapDataset(Dataset):
         lower_tensor = torch.from_numpy(lower_arr).unsqueeze(0)
         upper_tensor = torch.from_numpy(upper_arr).unsqueeze(0)
 
-        if self.transform:
-            lower_tensor = self.transform(lower_tensor)
-            upper_tensor = self.transform(upper_tensor)
-
         return lower_tensor, upper_tensor
 
 
 class EnrichedFontcapDataset(Dataset):
     """Dataset wrapper for scraped fonts"""
-    def __init__(self, data_root: Path):
+
+    def __init__(self, data_root: Path, excluded_fonts: list[str]):
         self.data_root = Path(data_root)
+        self.excluded_fonts = excluded_fonts
         self.pairs = self._collect_pairs()
 
     def _collect_pairs(self):
         pairs = []
         for font_dir in self.data_root.iterdir():
-            if not font_dir.is_dir():
+            if not font_dir.is_dir() or font_dir.name in self.excluded_fonts:
                 continue
 
             font_name = font_dir.name
@@ -93,20 +91,23 @@ class EnrichedFontcapDataset(Dataset):
 
 
 def get_dataloaders(
-    data_root: str | Path,
-    train_ratio: float = 0.8,
-    batch_size: int = 32,
-    shuffle: bool = True,
-    seed: int = 42
+        data_root: str | Path,
+        train_ratio: float = 0.8,
+        batch_size: int = 32,
+        shuffle: bool = True,
+        seed: int = 42,
+        excluded_fonts: list[str] | None = None
 ) -> tuple[DataLoader, DataLoader]:
+    if not excluded_fonts:
+        excluded_fonts = []
     if type(data_root) is str:
         data_root = Path(data_root)
-    dataset = FontcapDataset(data_root) # type: ignore
+    dataset = FontcapDataset(data_root, excluded_fonts=excluded_fonts)  # type: ignore
     total_size = len(dataset)
     train_size = int(train_ratio * total_size)
     val_size = total_size - train_size
     torch.manual_seed(seed)
     train_set, val_set = random_split(dataset, [train_size, val_size])
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=shuffle)
-    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False)
+    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=shuffle)
     return train_loader, val_loader
